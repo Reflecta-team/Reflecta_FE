@@ -2,8 +2,10 @@
 import { Box, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import palette from "@/theme/Palette";
+import { useAuth } from "@/stores/authStore";
 
 const Landing = () => {
+  const { isAuthenticated } = useAuth();
   return (
     <Box
       sx={{
@@ -17,16 +19,31 @@ const Landing = () => {
         background: "linear-gradient(to right, #f8f9ff, #e4e9ff)",
       }}
     >
-      <Typography variant="h2" fontWeight={500} mb={1}>
-        Prepare for your next interview
+      <Typography
+        sx={{
+          fontSize: "5rem",
+          width: "90%",
+          padding: "0 1rem",
+        }}
+        variant="h1"
+        fontWeight={500}
+        mb={1}
+      >
+        Your next interview
       </Typography>
-      <Typography variant="body1" color="text.secondary" mb={4}>
-        Practice your interview skills with realistic mock interviews.
+
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        mb={4}
+        fontSize={"1.75rem"}
+      >
+        Your mirror doesn't ask follow-ups. We do.
       </Typography>
-      <Typography variant="h3" fontWeight={700} mb={1}>
-        Your mirror doesn’t ask follow-ups. We do.
-      </Typography>
-      <Link to="/setup/interview" style={{ textDecoration: "none" }}>
+      <Link
+        to={isAuthenticated ? "/setup/interview" : "/login"}
+        style={{ textDecoration: "none", marginBottom: "1rem" }}
+      >
         <Button
           sx={{
             background: `linear-gradient(to right, ${palette.deepBlue}, ${palette.gradientPurple})`,
@@ -37,10 +54,10 @@ const Landing = () => {
             ":hover": { opacity: 0.9 },
             textTransform: "none",
             fontWeight: 600,
-            fontSize: "1rem",
+            fontSize: "1.25rem",
           }}
         >
-          Start Mock Interview
+          Get Started
         </Button>
       </Link>
     </Box>

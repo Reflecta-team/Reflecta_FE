@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-import logo from "@/assets/react.svg"; // Vite will import as URL string
-import { Link } from "react-router-dom"; // use this, not next/link
+import logo from "@/assets/react.svg";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -31,7 +31,7 @@ export default function Navbar() {
             sx={{ width: 32, height: 32 }}
           />
           <Typography variant="h6" fontWeight={500}>
-            Brand Key
+            Reflecta
           </Typography>
         </Box>
 
@@ -52,10 +52,49 @@ export default function Navbar() {
               },
             }}
           >
-            Get Started
+            Login
           </Button>
         </Link>
       </Toolbar>
     </AppBar>
   );
 }
+
+// import { Button, Box, AppBar, Toolbar, Typography } from "@mui/material";
+// import { Link, useNavigate } from "react-router-dom";
+// import { useAuth } from "@/stores/authStore";
+
+// export default function Navbar() {
+//   const { isAuthenticated, logout } = useAuth();
+//   const navigate = useNavigate();
+
+//   return (
+//     <AppBar position="static" color="transparent" elevation={0}>
+//       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+//         <Typography variant="h6">Brand Key</Typography>
+
+//         <Box>
+//           {isAuthenticated ? (
+//             <>
+//               <Button color="inherit" onClick={() => navigate("/home")}>
+//                 Home
+//               </Button>
+//               <Button color="inherit" onClick={() => logout()}>
+//                 Logout
+//               </Button>
+//             </>
+//           ) : (
+//             <>
+//               <Button color="inherit" onClick={() => navigate("/login")}>
+//                 Login
+//               </Button>
+//               <Button color="inherit" onClick={() => navigate("/signup")}>
+//                 Sign Up
+//               </Button>
+//             </>
+//           )}
+//         </Box>
+//       </Toolbar>
+//     </AppBar>
+//   );
+// }
