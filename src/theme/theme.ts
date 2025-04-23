@@ -1,7 +1,7 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import palette from "./Palette";
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     primary: {
       main: palette.deepBlue,
@@ -18,8 +18,20 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: `"Inter", "Roboto", "Helvetica", "Arial", sans-serif`,
+    fontFamily: `'Bricolage Grotesque', sans-serif`,
+    h1: {
+      fontWeight: 500,
+      fontSize: '4rem', 
+    },
+    body1: {
+      fontWeight: 400,
+      fontSize:"1.125rem", 
+    }
   },
+
 });
+
+theme = responsiveFontSizes(theme)
+
 
 export default theme;

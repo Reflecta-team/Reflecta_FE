@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: "calc(100vh - 81px)",
         background: "linear-gradient(to right, #f8f9ff, #e4e9ff)",
         display: "flex",
         flexDirection: "column",

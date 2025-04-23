@@ -10,8 +10,8 @@ const InterviewSetup = lazy(() => import("@/pages/setup/InterviewForm"));
 const Interview = lazy(() => import("@/pages/Interview"));
 const Results = lazy(() => import("@/pages/Analytics"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
-const Login = lazy(() => import("@/pages/Login"));
-const Signup = lazy(() => import("@/pages/Signup"));
+const Login = lazy(() => import("@/pages/login/Login"));
+const Signup = lazy(() => import("@/pages/login/SignUp"));
 
 export default function App() {
   const routes = useRoutes([
@@ -22,11 +22,7 @@ export default function App() {
     },
     {
       path: "/setup/interview",
-      element: (
-        <AuthGuard>
-          <InterviewSetup />
-        </AuthGuard>
-      ),
+      element: <InterviewSetup />,
     },
     {
       path: "/login",

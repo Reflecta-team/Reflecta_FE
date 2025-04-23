@@ -1,7 +1,7 @@
 // src/pages/Landing.tsx
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import palette from "@/theme/Palette";
+import ActionButton from "@/components/ActionButton";
 import { useAuth } from "@/stores/authStore";
 
 const Landing = () => {
@@ -20,46 +20,27 @@ const Landing = () => {
       }}
     >
       <Typography
-        sx={{
-          fontSize: "5rem",
-          width: "90%",
-          padding: "0 1rem",
-        }}
         variant="h1"
-        fontWeight={500}
         mb={1}
+        width={{ xs: "100%", sm: "80%", md: "60%" }}
+        padding={{ xs: "0 1rem", sm: "0 2rem", md: "0 3rem" }}
       >
-        Your next interview
+        Prepare for your next interview
       </Typography>
 
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        mb={4}
-        fontSize={"1.75rem"}
-      >
-        Your mirror doesn't ask follow-ups. We do.
-      </Typography>
       <Link
         to={isAuthenticated ? "/setup/interview" : "/login"}
-        style={{ textDecoration: "none", marginBottom: "1rem" }}
+        style={{
+          textDecoration: "none",
+          marginBottom: "2rem",
+          marginTop: "2rem",
+        }}
       >
-        <Button
-          sx={{
-            background: `linear-gradient(to right, ${palette.deepBlue}, ${palette.gradientPurple})`,
-            color: "white",
-            px: 4,
-            py: 1.5,
-            borderRadius: 2,
-            ":hover": { opacity: 0.9 },
-            textTransform: "none",
-            fontWeight: 600,
-            fontSize: "1.25rem",
-          }}
-        >
-          Get Started
-        </Button>
+        <ActionButton>Get Started</ActionButton>
       </Link>
+      <Typography variant="body1" color="text.secondary" mt={4}>
+        Your mirror doesn't ask follow-ups. We do.
+      </Typography>
     </Box>
   );
 };

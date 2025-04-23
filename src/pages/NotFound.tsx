@@ -29,7 +29,7 @@ const NotFound = () => {
         mb={4}
         maxWidth="400px"
       >
-        The page you’re looking for doesn’t exist or has been moved. Let’s get
+        The page you're looking for doesn't exist or has been moved. Let's get
         you back on track.
       </Typography>
       <Link to="/" style={{ textDecoration: "none" }}>
@@ -43,7 +43,7 @@ const NotFound = () => {
             py: 1.5,
             borderRadius: 2,
             ":hover": {
-              backgroundColor: "#2A55D3", // Slightly darker variant of accentBlue
+              backgroundColor: "#2A55D3",
             },
           }}
         >
