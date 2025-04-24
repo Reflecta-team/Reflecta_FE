@@ -14,7 +14,9 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
+    "@ricky0123/vad-react": "^0.0.28",
     "next": "^15.3.1",
+    "onnxruntime-web": "^1.21.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.1",
@@ -35,6 +37,7 @@
     "globals": "^16.0.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
-    "vite": "^6.3.1"
+    "vite": "^6.3.1",
+    "vite-plugin-static-copy": "^2.3.1"
   }
 }
