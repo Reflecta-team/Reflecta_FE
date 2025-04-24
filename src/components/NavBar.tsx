@@ -36,7 +36,7 @@ export default function Navbar() {
             alt="Logo"
             sx={{ width: 96, height: 64, cursor: "pointer" }}
             onClick={() => {
-              isAuthenticated ? navigate("/") : navigate("/landing");
+              isAuthenticated ? navigate("/home") : navigate("/");
             }}
           />
         </Box>

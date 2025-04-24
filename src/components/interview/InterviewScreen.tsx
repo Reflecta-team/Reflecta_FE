@@ -1,43 +1,48 @@
-import { useEffect, useRef, useState } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { useState, useRef, useEffect } from "react";
+import { Box, IconButton, Typography, Avatar, Button } from "@mui/material";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import CallEndIcon from "@mui/icons-material/CallEnd";
 import { useMicVAD } from "@ricky0123/vad-react";
 
-const InterviewScreen = () => {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+interface InterviewScreenProps {
+  vad: any;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  toggleAudio: () => void;
+  toggleVideo: () => void;
+  audioEnabled: boolean;
+  videoEnabled: boolean;
+  endCall: () => void;
+}
+
+const InterviewScreen: React.FC<InterviewScreenProps> = ({
+  vad,
+  videoRef,
+  toggleAudio,
+  toggleVideo,
+  audioEnabled,
+  videoEnabled,
+  endCall,
+}) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [audioEnabled, setAudioEnabled] = useState(true);
-  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [sideBySide, setSideBySide] = useState(false);
+  const [showLocalVideo, setShowLocalVideo] = useState(true);
+  const userProfileImage = "https://i.pravatar.cc/150?img=32";
 
-  // const vad = useMicVAD({
-  //   startOnLoad: true,
-  //   onSpeechStart: () => console.log("Started talking..."),
-  //   onSpeechEnd: () => console.log("Stopped talking."),
-  // });
+  // Commented out until backend is ready
+  // const wsRef = useRef<WebSocket | null>(null);
+  // const recorderRef = useRef<MediaRecorder | null>(null);
 
-  const vad = useMicVAD({
-    baseAssetPath: "/",
-    onnxWASMBasePath: "/",
-    onSpeechStart: () => console.log("Speech started!"),
-    onSpeechEnd: async (audio) => {
-      console.log("Speech ended! Got", audio.length, "samples");
-      // const wavBlob = float32ArrayToWavBlob(audio);
-      // await sendToAssemblyAI(wavBlob);
-    },
-  });
-  vad.start();
-
-  // Start cam/mic and attach to video tag
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream);
+      .then((camStream) => {
+        setStream(camStream);
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+          videoRef.current.srcObject = camStream;
         }
       })
       .catch((err) => {
@@ -45,24 +50,12 @@ const InterviewScreen = () => {
       });
 
     return () => {
-      stream?.getTracks().forEach((track) => track.stop());
+      // Cleanup
+      // recorderRef.current?.stop();
+      // wsRef.current?.close();
+      stream?.getTracks().forEach((t) => t.stop());
     };
   }, []);
-
-  const toggleAudio = () => {
-    if (!stream) return;
-    const enabled = !audioEnabled;
-    stream.getAudioTracks().forEach((track) => (track.enabled = enabled));
-    vad?.[enabled ? "start" : "pause"](); // sync VAD
-    setAudioEnabled(enabled);
-  };
-
-  const toggleVideo = () => {
-    if (!stream) return;
-    const enabled = !videoEnabled;
-    stream.getVideoTracks().forEach((track) => (track.enabled = enabled));
-    setVideoEnabled(enabled);
-  };
 
   return (
     <Box
@@ -71,52 +64,40 @@ const InterviewScreen = () => {
         background: "black",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        p: 3,
+        justifyContent: "space-between",
+        p: 2,
       }}
     >
-      <Typography variant="h4" mb={2} fontWeight={600} color="white">
+      <Typography
+        variant="h4"
+        mt={2}
+        fontWeight={600}
+        color="white"
+        textAlign="center"
+      >
         Live Mock Interview
       </Typography>
 
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 2,
+          position: "relative",
           width: "100%",
           maxWidth: 1200,
+          mx: "auto",
+          display: "flex",
+          flexDirection: sideBySide ? "row" : "column",
+          gap: 2,
+          flexGrow: 1,
         }}
       >
-        {/* Local Video */}
+        {/* Remote (Interviewer) video */}
         <Box
           sx={{
-            position: "relative",
             flex: 1,
-            maxWidth: 300,
+            height: sideBySide ? 500 : "100%",
             borderRadius: 2,
             overflow: "hidden",
-            border: `3px solid ${vad.userSpeaking ? "#4B5EFF" : "#555"}`,
-            transition: "border-color 0.3s ease",
-          }}
-        >
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </Box>
-
-        {/* Remote Video (placeholder) */}
-        <Box
-          sx={{
-            flex: 2,
-            borderRadius: 2,
-            overflow: "hidden",
-            background: "#1e1e2f",
+            backgroundColor: "#1e1e2f",
             position: "relative",
           }}
         >
@@ -130,15 +111,67 @@ const InterviewScreen = () => {
             }}
           />
         </Box>
+
+        {/* Local (You) video - corner or side view */}
+        <Box
+          sx={{
+            position: sideBySide ? "relative" : "absolute",
+            bottom: sideBySide ? 0 : 20,
+            right: sideBySide ? 0 : 20,
+            width: sideBySide ? 250 : 150,
+            height: sideBySide ? 180 : 120,
+            borderRadius: 2,
+            overflow: "hidden",
+            border: `2px solid ${vad.userSpeaking ? "#4B5EFF" : "#555"}`,
+            backgroundColor: "#1e1e2f",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {videoEnabled ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <Avatar src={userProfileImage} sx={{ width: 64, height: 64 }} />
+          )}
+        </Box>
       </Box>
 
-      {/* Mic/Camera Toggles */}
-      <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
+      {/* Fixed Bottom Bar */}
+      <Box
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          gap: 2,
+          py: 2,
+          background: "#111",
+        }}
+      >
         <IconButton onClick={toggleAudio} color="primary">
           {audioEnabled ? <MicIcon /> : <MicOffIcon />}
         </IconButton>
         <IconButton onClick={toggleVideo} color="primary">
           {videoEnabled ? <VideocamIcon /> : <VideocamOffIcon />}
+        </IconButton>
+        <Button
+          variant="outlined"
+          startIcon={<SwapHorizIcon />}
+          onClick={() => setSideBySide((prev) => !prev)}
+          sx={{ color: "white", borderColor: "#666" }}
+        >
+          Toggle View
+        </Button>
+        <IconButton onClick={endCall} color="error">
+          <CallEndIcon />
         </IconButton>
       </Box>
     </Box>
