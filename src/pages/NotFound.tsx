@@ -1,6 +1,7 @@
 import { Box, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import palette from "@/theme/Palette";
+import ActionButton from "@/components/ActionButton";
 
 const NotFound = () => {
   return (

@@ -7,7 +7,7 @@ import AuthGuard from "@/components/AuthGuard";
 const Home = lazy(() => import("@/pages/Home"));
 const Landing = lazy(() => import("@/pages/Landing"));
 const InterviewSetup = lazy(() => import("@/pages/setup/InterviewForm"));
-const Interview = lazy(() => import("@/pages/Interview"));
+const Interview = lazy(() => import("@/pages/interview/Interview"));
 const Results = lazy(() => import("@/pages/Analytics"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const Login = lazy(() => import("@/pages/login/Login"));
@@ -15,7 +15,14 @@ const Signup = lazy(() => import("@/pages/login/SignUp"));
 
 export default function App() {
   const routes = useRoutes([
-    { path: "/Home", element: <Home /> },
+    {
+      path: "/Home",
+      element: (
+        // <AuthGuard>
+        <Home />
+        // </AuthGuard>
+      ),
+    },
     {
       path: "/",
       element: <Landing />,
@@ -35,9 +42,9 @@ export default function App() {
     {
       path: "/interview",
       element: (
-        <AuthGuard>
-          <Interview />
-        </AuthGuard>
+        // <AuthGuard>
+        <Interview />
+        // </AuthGuard>
       ),
     },
     {

@@ -10,5 +10,5 @@ interface Props {
 export default function AuthGuard({ children }: Props) {
   const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? children : <Navigate to="/landing" />;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 }
