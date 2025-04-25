@@ -1,8 +1,10 @@
+// src/App.tsx
 import { useRoutes } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import Navbar from "@/components/NavBar";
 import Loader from "@/components/Loader";
 import AuthGuard from "@/components/AuthGuard";
+import MainLayout from "@/layouts/MainLayout";
+import PlainLayout from "@/layouts/PlainLayout";
 
 const Home = lazy(() => import("@/pages/Home"));
 const Landing = lazy(() => import("@/pages/Landing"));
@@ -16,52 +18,36 @@ const Signup = lazy(() => import("@/pages/login/SignUp"));
 export default function App() {
   const routes = useRoutes([
     {
-      path: "/Home",
-      element: (
-        // <AuthGuard>
-        <Home />
-        // </AuthGuard>
-      ),
+      element: <MainLayout />,
+      children: [
+        { path: "/Home", element: <Home /> },
+        { path: "/", element: <Landing /> },
+        { path: "/setup/interview", element: <InterviewSetup /> },
+        { path: "/analytics", element: <Results /> },
+        { path: "*", element: <NotFound /> },
+        {
+          path: "/results",
+          element: (
+            <AuthGuard>
+              <Results />
+            </AuthGuard>
+          ),
+        },
+      ],
     },
     {
-      path: "/",
-      element: <Landing />,
+      element: <PlainLayout />,
+      children: [
+        { path: "/login", element: <Login /> },
+        { path: "/signup", element: <Signup /> },
+        { path: "/interview", element: <Interview /> },
+      ],
     },
-    {
-      path: "/setup/interview",
-      element: <InterviewSetup />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/signup",
-      element: <Signup />,
-    },
-    {
-      path: "/interview",
-      element: (
-        // <AuthGuard>
-        <Interview />
-        // </AuthGuard>
-      ),
-    },
-    {
-      path: "/results",
-      element: (
-        <AuthGuard>
-          <Results />
-        </AuthGuard>
-      ),
-    },
-    { path: "*", element: <NotFound /> },
   ]);
 
-  return (
-    <>
-      <Navbar />
-      <Suspense fallback={<Loader />}>{routes}</Suspense>
-    </>
-  );
+  return <Suspense fallback={<Loader />}>{routes}</Suspense>;
 }
+
+// AuthGuard>
+//           <Results />
+//         </AuthGuard>

@@ -70,12 +70,57 @@ const InterviewLogic = () => {
   }, []);
 
   const endCall = () => {
-    const stream = videoRef.current?.srcObject as MediaStream;
-    stream?.getTracks().forEach((track) => track.stop());
-    videoRef.current!.srcObject = null;
+    // Ensure the video track is stopped
+    if (videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
 
-    console.log("Call ended");
-    navigate("/summary"); // or open a modal
+      // Stop all media tracks (video and audio)
+      stream.getTracks().forEach((track) => {
+        track.stop();
+        console.log(`Stopped track: ${track.kind}`); // Log each track stopped
+      });
+    }
+
+    // Clear the srcObject of the video element
+    videoRef.current!.srcObject = null;
+    console.log("Video stream detached from videoRef");
+
+    // Cleanup remaining media devices
+    cleanupDevices();
+
+    console.log("Call ended and media resources released");
+    navigate("/summary");
+  };
+
+  // Function to ensure all media devices are stopped (e.g., microphone, camera)
+  const cleanupDevices = () => {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      devices.forEach((device) => {
+        let constraints = null;
+
+        if (device.kind === "audioinput") {
+          constraints = { audio: { deviceId: device.deviceId } };
+        } else if (device.kind === "videoinput") {
+          constraints = { video: { deviceId: device.deviceId } };
+        }
+
+        if (constraints) {
+          navigator.mediaDevices
+            .getUserMedia(constraints)
+            .then((stream) => {
+              stream.getTracks().forEach((track) => {
+                track.stop();
+                console.log(
+                  `Stopped device: ${device.kind}, id: ${device.deviceId}`
+                );
+              });
+            })
+            .catch((err) => {
+              console.error(`Error stopping device ${device.deviceId}:`, err);
+            });
+        }
+      });
+    });
   };
 
   const toggleAudio = () => {
@@ -96,12 +141,26 @@ const InterviewLogic = () => {
   };
 
   const toggleVideo = () => {
-    const tracks = (
-      videoRef.current?.srcObject as MediaStream
-    )?.getVideoTracks();
+    if (!stream) return;
+
+    const videoTrack = stream.getVideoTracks()[0];
+    if (!videoTrack) return;
+
     const enabled = !videoEnabled;
-    tracks?.forEach((track) => (track.enabled = enabled));
+    videoTrack.enabled = enabled;
     setVideoEnabled(enabled);
+
+    // 👇 FIX: wait a frame to let the <video> DOM ref rebind
+    setTimeout(() => {
+      if (videoRef.current && enabled) {
+        const refreshedStream = new MediaStream([
+          videoTrack,
+          ...stream.getAudioTracks(),
+        ]);
+        videoRef.current.srcObject = refreshedStream;
+        console.log(" Re-attached stream to videoRef after toggle");
+      }
+    }, 100);
   };
 
   return (

@@ -36,7 +36,7 @@ export default function MicCameraTest({ onComplete }: Props) {
   return (
     <Box
       sx={{
-        height: "calc(100vh - 81px)",
+        height: "100vh",
         width: "100vw",
         display: "flex",
         justifyContent: "center",
